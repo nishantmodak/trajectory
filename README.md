@@ -1,5 +1,8 @@
 # trajectory
 
+[![PyPI version](https://badge.fury.io/py/code-trajectory.svg)](https://pypi.org/project/code-trajectory/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 Capture the *why* behind AI-generated code.
 
 When you use Claude Code to write code, trajectory generates a decision log — what was decided, what was rejected, what was assumed. Attach it to your PR so reviewers see the reasoning, not just the diff.
