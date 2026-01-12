@@ -7,7 +7,7 @@ When you use Claude Code to write code, trajectory generates a decision log — 
 ## Install
 
 ```bash
-pip install trajectory
+pip install code-trajectory
 ```
 
 Requires `ANTHROPIC_API_KEY` environment variable.

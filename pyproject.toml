@@ -3,7 +3,7 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "trajectory"
+name = "code-trajectory"
 version = "0.1.0"
 description = "Generate decision logs from Claude Code sessions"
 readme = "README.md"
