@@ -1,0 +1,67 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "trajectory"
+version = "0.1.0"
+description = "Generate decision logs from Claude Code sessions"
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.9"
+authors = [
+    { name = "Nishant Modak" }
+]
+keywords = [
+    "claude",
+    "ai",
+    "code-review",
+    "decision-log",
+    "provenance"
+]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Environment :: Console",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Software Development :: Documentation",
+    "Topic :: Software Development :: Version Control",
+]
+
+dependencies = [
+    "anthropic>=0.20.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0.0",
+    "ruff>=0.1.0",
+]
+
+[project.scripts]
+trajectory = "trajectory.cli:main"
+
+[project.urls]
+Homepage = "https://github.com/nishantmodak/trajectory"
+Repository = "https://github.com/nishantmodak/trajectory"
+Issues = "https://github.com/nishantmodak/trajectory/issues"
+
+[tool.hatch.build.targets.wheel]
+packages = ["trajectory"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py39"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "W"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
