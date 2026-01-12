@@ -3,7 +3,7 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "code-trajectory"
+name = "trajectory-ai"
 version = "0.1.1"
 description = "Generate decision logs from Claude Code sessions"
 readme = "README.md"
@@ -49,9 +49,9 @@ dev = [
 trajectory = "trajectory.cli:main"
 
 [project.urls]
-Homepage = "https://github.com/nishantmodak/trajectory"
-Repository = "https://github.com/nishantmodak/trajectory"
-Issues = "https://github.com/nishantmodak/trajectory/issues"
+Homepage = "https://github.com/nishantmodak/trajectory-ai"
+Repository = "https://github.com/nishantmodak/trajectory-ai"
+Issues = "https://github.com/nishantmodak/trajectory-ai/issues"
 
 [tool.hatch.build.targets.wheel]
 packages = ["trajectory"]

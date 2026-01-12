@@ -237,7 +237,7 @@ ENVIRONMENT
   ANTHROPIC_API_KEY    Required. Your Anthropic API key.
 
 MORE INFO
-  https://github.com/nishantmodak/trajectory
+  https://github.com/nishantmodak/trajectory-ai
 """
     print(help_text)
     return 0

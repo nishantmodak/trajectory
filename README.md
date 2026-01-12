@@ -1,6 +1,6 @@
 # trajectory
 
-[![PyPI version](https://badge.fury.io/py/code-trajectory.svg)](https://pypi.org/project/code-trajectory/)
+[![PyPI version](https://badge.fury.io/py/trajectory-ai.svg)](https://pypi.org/project/trajectory-ai/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 Capture the *why* behind AI-generated code.
@@ -10,7 +10,7 @@ When you use Claude Code to write code, trajectory generates a decision log — 
 ## Install
 
 ```bash
-pip install code-trajectory
+pip install trajectory-ai
 ```
 
 Requires `ANTHROPIC_API_KEY` environment variable.
