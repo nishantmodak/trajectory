@@ -18,7 +18,7 @@ With AI analysis:
     output = render_decision_log(data, analysis, audit=True)
 """
 
-__version__ = "0.1.0"
+__version__ = "0.1.1"
 
 from .models import (
     SessionData,
