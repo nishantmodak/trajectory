@@ -34,7 +34,7 @@ from .parser import (
     build_transcript,
 )
 from .analyzer import analyze_session, analyze_session_for_flow
-from .renderer import render_decision_log, render_flow_diagram
+from .renderer import render_decision_log, render_flow_diagram, render_transcript
 from .cli import main
 
 __all__ = [
@@ -55,6 +55,7 @@ __all__ = [
     # Renderer
     "render_decision_log",
     "render_flow_diagram",
+    "render_transcript",
     # CLI
     "main",
 ]

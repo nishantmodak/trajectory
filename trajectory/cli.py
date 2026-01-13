@@ -9,7 +9,7 @@ from pathlib import Path
 
 from .parser import find_latest_session, list_sessions, parse_session, resolve_session
 from .analyzer import analyze_session, analyze_session_for_flow
-from .renderer import render_decision_log, render_flow_diagram
+from .renderer import render_decision_log, render_flow_diagram, render_transcript
 
 
 def main() -> int:
@@ -23,16 +23,17 @@ Examples:
   trajectory gen --copy          Generate + copy to clipboard
   trajectory gen --flow          ASCII flow diagram
   trajectory gen --audit         Full provenance details
+  trajectory transcript          Full conversation to stdout
+  trajectory transcript --copy   Copy transcript to clipboard
   trajectory gen -s 17c072d8     Use specific session
   trajectory list                Show available sessions
   trajectory help                Show detailed help
 
 Workflow:
   1. Use Claude Code to build something
-  2. Run: trajectory gen
-  3. Copy trajectory.md to your PR description
+  2. Run: trajectory gen (for PR summary) or trajectory transcript (for full conversation)
 
-Requires ANTHROPIC_API_KEY environment variable.
+Requires ANTHROPIC_API_KEY environment variable (for gen command only).
 """,
         formatter_class=argparse.RawDescriptionHelpFormatter
     )
@@ -80,6 +81,27 @@ Requires ANTHROPIC_API_KEY environment variable.
         help="Claude model for analysis"
     )
 
+    # transcript command
+    transcript_parser = subparsers.add_parser(
+        "transcript",
+        help="Output full conversation transcript"
+    )
+    transcript_parser.add_argument(
+        "-s", "--session",
+        metavar="ID",
+        help="Session ID or path"
+    )
+    transcript_parser.add_argument(
+        "-p", "--project",
+        metavar="PATH",
+        help="Project path (defaults to current directory)"
+    )
+    transcript_parser.add_argument(
+        "--copy",
+        action="store_true",
+        help="Copy output to clipboard"
+    )
+
     # list command
     list_parser = subparsers.add_parser(
         "list",
@@ -102,6 +124,8 @@ Requires ANTHROPIC_API_KEY environment variable.
     # Handle subcommands
     if args.command == "gen":
         return cmd_gen(args)
+    elif args.command == "transcript":
+        return cmd_transcript(args)
     elif args.command == "list":
         return cmd_list(args)
     elif args.command == "help":
@@ -164,6 +188,42 @@ def cmd_gen(args) -> int:
     return 0
 
 
+def cmd_transcript(args) -> int:
+    """Output full conversation transcript."""
+    # Find session
+    if args.session:
+        if "/" in args.session or args.session.endswith(".jsonl"):
+            session_path = Path(args.session)
+        else:
+            session_path = resolve_session(args.session, args.project)
+    else:
+        session_path = find_latest_session(args.project)
+
+    if not session_path or not session_path.exists():
+        print("Error: No session found", file=sys.stderr)
+        print("Use 'trajectory list' to see available sessions", file=sys.stderr)
+        return 1
+
+    # Parse session
+    print(f"Parsing session: {session_path.stem[:8]}", file=sys.stderr)
+    data = parse_session(session_path)
+
+    print(f"Found {len(data.conversation)} turns", file=sys.stderr)
+
+    # Render transcript
+    output = render_transcript(data)
+
+    # Handle output
+    if args.copy:
+        copy_to_clipboard(output)
+        print("Copied to clipboard", file=sys.stderr)
+
+    # Always output to stdout
+    print(output)
+
+    return 0
+
+
 def cmd_list(args) -> int:
     """List available sessions."""
     sessions = list_sessions(getattr(args, "project", None))
@@ -187,9 +247,10 @@ def cmd_help() -> int:
 TRAJECTORY - Capture the why behind AI-generated code
 
 COMMANDS
-  trajectory gen [options]     Generate trajectory.md from Claude Code session
-  trajectory list [options]    List available sessions
-  trajectory help              Show this help
+  trajectory gen [options]        Generate trajectory.md (decision summary)
+  trajectory transcript [options] Full conversation transcript to stdout
+  trajectory list [options]       List available sessions
+  trajectory help                 Show this help
 
 GEN OPTIONS
   -s, --session ID     Use specific session (from 'trajectory list')
@@ -200,13 +261,19 @@ GEN OPTIONS
   --copy               Copy output to clipboard
   --model MODEL        Claude model (default: claude-sonnet-4-20250514)
 
+TRANSCRIPT OPTIONS
+  -s, --session ID     Use specific session (from 'trajectory list')
+  -p, --project PATH   Project directory (default: current)
+  --copy               Copy output to clipboard
+
 LIST OPTIONS
   -p, --project PATH   Project directory (default: current)
 
 OUTPUT FORMATS
-  Default              Intent + top 2 decisions (15-second skim)
-  --audit              All decisions with reasoning + provenance labels
-  --flow               Visual ASCII diagram of decision flow
+  gen (default)        Intent + top 2 decisions (15-second skim)
+  gen --audit          All decisions with reasoning + provenance labels
+  gen --flow           Visual ASCII diagram of decision flow
+  transcript           Full conversation with tool call summaries
 
 PROVENANCE LABELS (in --audit mode)
   [explicit]           User directly stated this
@@ -224,17 +291,20 @@ EXAMPLES
   trajectory gen --audit              Full provenance details
   trajectory gen -s a8718b74          Use specific session
   trajectory gen --flow               ASCII diagram to stdout
-  trajectory gen --flow > flow.txt    Save flow to file
-  trajectory gen --flow --copy        Copy flow to clipboard
+  trajectory transcript               Full conversation to stdout
+  trajectory transcript --copy        Copy transcript to clipboard
+  trajectory transcript > session.md  Save transcript to file
   trajectory list                     Show available sessions
 
 WORKFLOW
-  1. Use Claude Code to build something
-  2. Run: trajectory gen
-  3. Paste trajectory.md into your PR description
+  For PR reviews:
+    trajectory gen → paste trajectory.md into PR description
+
+  For sharing/playback:
+    trajectory transcript → share the full conversation
 
 ENVIRONMENT
-  ANTHROPIC_API_KEY    Required. Your Anthropic API key.
+  ANTHROPIC_API_KEY    Required for 'gen' command. Not needed for 'transcript'.
 
 MORE INFO
   https://github.com/nishantmodak/trajectory-ai

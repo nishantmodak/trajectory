@@ -5,7 +5,7 @@
 
 Capture the *why* behind AI-generated code.
 
-When you use Claude Code to write code, trajectory generates a decision log — what was decided, what was rejected, what was assumed. Attach it to your PR so reviewers see the reasoning, not just the diff.
+When you use Claude Code to write code, trajectory captures your coding session — decisions made, alternatives rejected, the full conversation. Share the reasoning, not just the diff.
 
 ## Install
 
@@ -13,7 +13,7 @@ When you use Claude Code to write code, trajectory generates a decision log — 
 pip install trajectory-ai
 ```
 
-Requires `ANTHROPIC_API_KEY` environment variable.
+`ANTHROPIC_API_KEY` required for `gen` command (decision summaries).
 
 ## Usage
 
@@ -41,10 +41,12 @@ _Session: a1b2c3d4_
 ## Commands
 
 ```bash
-trajectory gen                 # generate trajectory.md
+trajectory gen                 # generate trajectory.md (decision summary)
 trajectory gen --copy          # generate + copy to clipboard
 trajectory gen --flow          # ASCII flow diagram
 trajectory gen --audit         # full provenance details
+trajectory transcript          # full conversation to stdout
+trajectory transcript --copy   # copy transcript to clipboard
 trajectory gen -s 17c072d8     # use specific session
 trajectory list                # show available sessions
 ```
@@ -85,6 +87,47 @@ trajectory gen --flow
 ╚══ Session: a1b2c3d4 ══╝
 ```
 
+## Full Transcript
+
+```bash
+trajectory transcript
+```
+
+```markdown
+# Session: a1b2c3d4
+
+**Project:** `/path/to/project`
+**Branch:** `feat/add-user-auth`
+**Started:** 2026-01-12 10:30
+
+---
+
+## User
+
+Add JWT authentication to the API
+
+---
+
+## Assistant
+
+I'll help you implement JWT authentication...
+
+`[Read]` src/auth.ts
+`[Edit]` src/auth.ts
+`[Bash]` `npm install jsonwebtoken`
+
+---
+
+## User
+
+Use RS256 instead of HS256
+
+---
+...
+```
+
+No API key needed — just formats your local session logs.
+
 ## Full Provenance (--audit)
 
 ```markdown
@@ -114,14 +157,14 @@ trajectory gen --flow
 
 1. Claude Code saves session logs to `~/.claude/projects/`
 2. Trajectory reads the JSONL (conversation, tool calls, file edits)
-3. Uses Claude API to extract structured decisions
-4. Generates clean markdown for your PR
+3. For `gen`: Uses Claude API to extract structured decisions
+4. For `transcript`: Formats raw conversation (no API needed)
 
 ## Requirements
 
 - Python 3.9+
 - Claude Code
-- `ANTHROPIC_API_KEY`
+- `ANTHROPIC_API_KEY` (for `gen` command only)
 
 ## License
 
